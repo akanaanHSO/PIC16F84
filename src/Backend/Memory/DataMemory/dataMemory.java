@@ -8,10 +8,10 @@ public class dataMemory {
     int bank1[] = new int[128]; //140-207
 
     public void writeData(int address, int data) {
-        dataMem[address] = data;
+        RAM[address] = data;
     }
 
     public int readData(int address) {
-        return dataMem[address];
+        return RAM[address];
     }
 }
