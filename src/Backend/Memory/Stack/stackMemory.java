@@ -1,59 +1,54 @@
 package Backend.Memory.Stack;
+import java.util.Stack;
 
+/**
+ * Stack Memory is a stack that holds addresses.
+ * The stack is 8 addresses long used to store return addresses for function calls.
+ */
 public class stackMemory {
     // Stack - Adresse 0-7
-    int stack[] = new int[8];
+    private final Stack<Integer> stack = new Stack<Integer>();
 
-    public void push(int data) {
-        for (int i = 0; i < stack.length; i++) {
-            if (stack[i] == 0) {
-                stack[i] = data;
-                break;
-            }
+    // pushes an address onto the stack
+    public void push(int address) {
+        if (stack.size() < 8) {
+            stack.push(address & 0x3FFF);
+        } else {
+            System.out.println("stack overflow");
         }
     }
 
+    // removes the top element of the stack and returns it
     public int pop() {
-        int data = 0;
-        for (int i = stack.length - 1; i >= 0; i--) {
-            if (stack[i] != 0) {
-                data = stack[i];
-                stack[i] = 0;
-                break;
-            }
+        if (!stack.empty()) {
+            return stack.pop();
+        } else {
+            System.out.println("stack underflow");
+            return 0;
         }
-        return data;
     }
 
+    // prints the stack
     public void printStack() {
-        for (int i = 0; i < stack.length; i++) {
-            System.out.println("Stack[" + i + "] = " + stack[i]);
+        System.out.println("Current stack: ");
+        for (int i = 0; i < stack.size(); i++) {
+            System.out.println(stack.get(i));
         }
     }
 
+    // clears the stack
     public void clearStack() {
-        for (int i = 0; i < stack.length; i++) {
-            stack[i] = 0;
+        stack.clear();
+        System.out.println("stack cleared");
+    }
+
+    // returns the top element of the stack without removing it
+    public int peek() {
+        if (!stack.empty()) {
+            return stack.peek();
+        } else {
+            System.out.println("stack underflow");
+            return 0;
         }
-    }
-
-    public int getStackLength() {
-        return stack.length;
-    }
-
-    public int getStackValue(int address) {
-        return stack[address];
-    }
-
-    public void setStackValue(int address, int data) {
-        stack[address] = data;
-    }
-
-    public void setStack(int[] stack) {
-        this.stack = stack;
-    }
-
-    public int[] getStack() {
-        return stack;
     }
 }
