@@ -1,54 +1,56 @@
 package Backend.Memory.Stack;
-import java.util.Stack;
 
 /**
- * Stack Memory is a stack that holds addresses.
- * The stack is 8 addresses long used to store return addresses for function calls.
+ * Stack Memory is a stack that holds return addresses for sub -program calls (call, return).
+ * The stack is 8 addresses long (Ring buffer behavior if overflow).
  */
 public class stackMemory {
     // Stack - Adresse 0-7
-    private final Stack<Integer> stack = new Stack<Integer>();
+    private final int[] stack = new int[8]; // 8 addresses
+    private int stackPointer = 0; // 3 bits
 
-    // pushes an address onto the stack
+    /**
+     * puts a return address onto the stack
+     */
     public void push(int address) {
-        if (stack.size() < 8) {
-            stack.push(address & 0x3FFF);
-        } else {
-            System.out.println("stack overflow");
-        }
+        stack[stackPointer] = address & 0x3FFF; // 14 bit
+        stackPointer = (stackPointer + 1) % 8;
     }
 
-    // removes the top element of the stack and returns it
+    /**
+     * removes the top element of the stack and returns it
+     */
     public int pop() {
-        if (!stack.empty()) {
-            return stack.pop();
-        } else {
-            System.out.println("stack underflow");
-            return 0;
-        }
+        stackPointer = (stackPointer - 1 + 8) % 8;
+        return stack[stackPointer];
     }
 
-    // prints the stack
+    /**
+     * prints the current stack (for debugging)
+     */
     public void printStack() {
         System.out.println("Current stack: ");
-        for (int i = 0; i < stack.size(); i++) {
-            System.out.println(stack.get(i));
+        for (int i = 0; i < stack.length; i++) {
+            System.out.printf("Stack[%d]: 0x%04X%n", i, stack[i]);
         }
     }
 
-    // clears the stack
+    /**
+     * clears the stack (Reset)
+     */
     public void clearStack() {
-        stack.clear();
+        for (int i = 0; i < stack.length; i++) {
+            stack[i] = 0;
+        }
+        stackPointer = 0;
         System.out.println("stack cleared");
     }
 
-    // returns the top element of the stack without removing it
+    /**
+     * returns the top element of the stack (without removing it)
+     */
     public int peek() {
-        if (!stack.empty()) {
-            return stack.peek();
-        } else {
-            System.out.println("stack underflow");
-            return 0;
-        }
+        int previousStackPointer = (stackPointer - 1 + 8) % 8;
+        return stack[previousStackPointer];
     }
 }

@@ -9,14 +9,26 @@ public class programMemory {
     // Memory for all executable instructions
     private final int[] memory = new int[1024];
 
-    public void write(int address, int value) {
+    /**
+     * Writes an instruction to the program memory
+     *
+     * @param address Address of the instruction
+     * @param instruction   Instruction to be written
+     */
+    public void write(int address, int instruction) {
         if (address >= 0 && address < 1024) {
-            memory[address] = value & 0x3FFF;
+            memory[address] = instruction & 0x3FFF; // mask to 14 bits
         } else {
             System.out.println("Invalid address in program memory.\n");
         }
     }
 
+    /**
+     * Reads an instruction from the program memory
+     *
+     * @param address Address of the instruction
+     * @return Instruction at the given address
+     */
     public int read(int address) {
         if (address >= 0 && address < 1024) {
             return memory[address];
