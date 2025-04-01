@@ -1,13 +1,10 @@
-package Backend.Registers.statusRegister;
+package Backend.Registers.StatusRegister;
 
-// Hier soll es drei wichtige Flags geben, die wir in der ALU benötigen.
-// Diese sind das Zero-Flag, das Carry-Flag und das Negative-Flag.
-// Diese Flags sollen in einem Integer-Array gespeichert werden.
-/*
-* Das Zero-Flag wird gesetzt, wenn das Ergebnis einer Operation 0 ist.
-* Das Carry-Flag wird gesetzt, wenn das Ergebnis einer Operation einen Übertrag hat.
-* Das Negative-Flag wird gesetzt, wenn das Ergebnis einer Operation negativ ist.
-* */
+/**
+ * The Zero flag is set when the result of an operation is 0.
+ * The Carry flag is set when the result of an operation has a carry (overflow) in the most significant bit (MSB).
+ * The Digit Carry (Halfcarry) flag is set when the result of an operation has a carry in the lower nibble (4 bits).
+ */
 public class statusRegister {
 
     /**
@@ -22,7 +19,7 @@ public class statusRegister {
      **/
 
     // Flags
-    int flags[] = new int[8];
+    int[] flags = new int[8];
 
     // Methoden (Getter und Setter)
     public void setCarryFlag(int flag) {
