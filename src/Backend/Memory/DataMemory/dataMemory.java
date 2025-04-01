@@ -11,6 +11,17 @@ public class dataMemory {
     private final int[] bank1 = new int[128]; //140-207
 
     /**
+     * Constructor for data memory
+     */
+    public dataMemory() {
+        for (int i = 0; i < 128; i++) {
+            bank0[i] = 0;
+            bank1[i] = 0;
+        }
+        System.out.println("Data memory initialized");
+    }
+
+    /**
      * Writes data to the data memory
      *
      * @param address Address of the data
@@ -20,9 +31,9 @@ public class dataMemory {
     public void writeData(int address, int data, int RP0) {
         if (address >= 0 && address < 128) {
             if (RP0 == 0) {
-                bank0[address] = data & 0xFF;
+                bank0[address] = data & 0xFF; // mask to 8 bits
             } else if (RP0 == 1) {
-                bank1[address] = data & 0xFF;
+                bank1[address] = data & 0xFF; // mask to 8 bits
             } else {
                 System.out.println("Invalid RP0 value in data memory.\n");
             }

@@ -1,8 +1,8 @@
 package Backend.Memory.Stack;
 
 /**
- * Stack Memory is a stack that holds return addresses for sub -program calls (call, return).
- * The stack is 8 addresses long (Ring buffer behavior if overflow).
+ * Stack Memory is a stack that holds return addresses for sub -program calls (CALL, RETURN, RETFIE, RETLW).
+ * The stack is 8 addresses long (circular buffer behavior if overflow).
  */
 public class stackMemory {
     // Stack - Adresse 0-7
@@ -13,7 +13,7 @@ public class stackMemory {
      * puts a return address onto the stack
      */
     public void push(int address) {
-        stack[stackPointer] = address & 0x3FFF; // 14 bit
+        stack[stackPointer] = address & 0x1FFF; // mask to 13 bits
         stackPointer = (stackPointer + 1) % 8;
     }
 

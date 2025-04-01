@@ -16,11 +16,8 @@ public class programMemory {
      * @param instruction   Instruction to be written
      */
     public void write(int address, int instruction) {
-        if (address >= 0 && address < 1024) {
-            memory[address] = instruction & 0x3FFF; // mask to 14 bits
-        } else {
-            System.out.println("Invalid address in program memory.\n");
-        }
+        int effectiveAddress = address & 0x3FF; // mask to 10 bits (Address)
+        memory[effectiveAddress] = instruction & 0x3FFF; // mask to 14 bits (Instruction)
     }
 
     /**
@@ -30,11 +27,31 @@ public class programMemory {
      * @return Instruction at the given address
      */
     public int read(int address) {
-        if (address >= 0 && address < 1024) {
-            return memory[address];
-        } else {
-            System.out.println("Invalid address in program memory.\n");
-            return 0;
+        int effectiveAddress = address & 0x3FF; // mask to 10 bits (Address)
+        return memory[effectiveAddress] & 0x3FFF; // mask to 14 bits (Instruction)
+    }
+
+    /**
+     * Returns the size of the program memory
+     *
+     * @return Size of the program memory
+     */
+    public int getSize() {
+        return memory.length;
+    }
+
+    /**
+     * Loads a program into the program memory
+     *
+     * @param instructions Array of instructions to be loaded
+     */
+    public void loadProgram(int[] instructions) {
+        if (instructions.length > memory.length) {
+            System.out.println("Program is too large for memory.\n");
+            return;
+        }
+        for (int i = 0; i < instructions.length; i++) {
+            write(i, instructions[i]);
         }
     }
 }
