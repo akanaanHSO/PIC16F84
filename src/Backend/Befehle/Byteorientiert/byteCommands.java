@@ -7,7 +7,7 @@ import Backend.Registers.WorkingRegister.workingRegister;
 public class byteCommands {
     
     /**
-     * Adds working register and f
+     * Adds working register and content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
@@ -32,7 +32,7 @@ public class byteCommands {
     }
 
     /**
-     * AND-Connection between Working register and f
+     * AND-Connection between Working register and content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
@@ -55,7 +55,7 @@ public class byteCommands {
     }
 
     /**
-     * Clears f
+     * Clears content of f
      * @param f
      */
     public static void CLRF(int f, statusRegister status, dataMemory data) {
@@ -72,7 +72,7 @@ public class byteCommands {
     }
 
     /**
-     * Forms complement of f
+     * Forms complement of content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
@@ -94,7 +94,7 @@ public class byteCommands {
     }
 
     /**
-     * Decrements f
+     * Decrements content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
@@ -113,7 +113,7 @@ public class byteCommands {
     }
 
     /**
-     * Decrements f, skips next operation if result is zero
+     * Decrements content of f, skips next instruction if result is zero
      * @param f
      * @param d destination
      */
@@ -122,7 +122,7 @@ public class byteCommands {
     }
 
     /**
-     * Increments f
+     * Increments content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
@@ -141,7 +141,7 @@ public class byteCommands {
     }
 
     /**
-     * Increments f, skips next operation if result is zero
+     * Increments content of f, skips next instruction if result is zero
      * @param f
      * @param d
      */
@@ -150,7 +150,7 @@ public class byteCommands {
     }
 
     /**
-     * OR-connection between working register and f
+     * OR-connection between working register and content of f
      * @param f
      * @param d destination-bit (0 = wReg, 1 = f)
      * @param wReg working register
