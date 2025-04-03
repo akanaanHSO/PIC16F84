@@ -1,6 +1,7 @@
 package Backend.Befehle.Byteorientiert;
 
 import Backend.Memory.DataMemory.dataMemory;
+import Backend.Registers.ProgramCounter.programCounter;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
 
@@ -115,10 +116,22 @@ public class byteCommands {
     /**
      * Decrements content of f, skips next instruction if result is zero
      * @param f
-     * @param d destination
+     * @param d destination-bit (0 = wReg, 1 = f)
+     * @param wReg working register
+     * @param status status register
+     * @param data data memory
      */
-    public static void DECFSZ(int f, int d) {
-
+    public static void DECFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
+        int RP0 = status.getRP0() ? 1 : 0;
+        int result = data.readData(f, RP0) - 1;
+        if(d == 0) {
+            wReg.write(result);
+        } else {
+            data.writeData(f,result,RP0);
+        }
+        if(result == 0) {
+            //Skip next instruction, execute a NOP
+        }
     }
 
     /**
@@ -143,9 +156,12 @@ public class byteCommands {
     /**
      * Increments content of f, skips next instruction if result is zero
      * @param f
-     * @param d
+     * @param d destination-bit (0 = wReg, 1 = f)
+     * @param wReg working register
+     * @param status status register
+     * @param data data memory
      */
-    public static void INCFSZ(int f, int d) {
+    public static void INCFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
 
     }
 
@@ -173,7 +189,10 @@ public class byteCommands {
     /**
      * Gets value from f
      * @param f
-     * @param d destination
+     * @param d destination-bit (0 = wReg, 1 = f)
+     * @param wReg working register
+     * @param status status register
+     * @param data data memory
      */
     public static void MOVF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
@@ -183,7 +202,9 @@ public class byteCommands {
     /**
      * Writes content of working register to f
      * @param f
-     * @param wReg
+     * @param wReg working register
+     * @param status status register
+     * @param data data memory
      */
     public static void MOVWF(int f, workingRegister wReg, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
@@ -194,25 +215,48 @@ public class byteCommands {
      * No Operation
      */
     public static void NOP() {
-
     }
 
     /**
      * Rotates content of f to the left through carry
      * @param f
-     * @param d destination
+     * @param d destination-bit (0 = wReg, 1 = f)
+     * @param status status register
+     * @param data data memory
      */
-    public static void RLF(int f, int d, statusRegister status, dataMemory data) {
-
+    public static void RLF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
+        int RP0 = status.getRP0() ? 1 : 0;
+        int num = data.readData(f, RP0);
+        int carry = status.getCarryFlag() ? 1 : 0;
+        status.setCarryFlag((num & 0x80) == 0x80);
+        num = num << 1;
+        num += carry;
+        if(d == 0) {
+            wReg.write(num);
+        } else {
+            data.writeData(f,num,RP0);
+        }
     }
 
     /**
      * Rotates content of f to the right through carry
      * @param f
-     * @param d destination
+     * @param d destination-bit (0 = wReg, 1 = f)
+     * @param status status register
+     * @param data data memory
      */
-    public static void RRF(int f, int d, statusRegister status, dataMemory data) {
-
+    public static void RRF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
+        int RP0 = status.getRP0() ? 1 : 0;
+        int num = data.readData(f,RP0);
+        int carry = status.getCarryFlag() ? 1 : 0;
+        status.setCarryFlag((num & 1) == 1);
+        num = num >> 1;
+        num += carry << 0xFF;
+        if(d == 0) {
+            wReg.write(num);
+        } else {
+            data.writeData(f,num,RP0);
+        }
     }
 
     /**

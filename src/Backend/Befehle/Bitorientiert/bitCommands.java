@@ -21,12 +21,9 @@ public class bitCommands {
     public static void BTFSC (int f, int b, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
         int dataBit = data.readData(f, RP0) & (1 << b);
-
-        if(dataBit == (1 << b)) {
-            //Next instruction
-        } else {
+        
+        if(dataBit == 0){
             //Skip next instruction, execute NOP
-            byteCommands.NOP();
         }
     }
 
@@ -35,10 +32,7 @@ public class bitCommands {
         int dataBit = data.readData(f, RP0) & (1 << b);
 
         if(dataBit == (1 << b)) {
-            //Skip next instruction, execute NOP
-            byteCommands.NOP();
-        } else {
-            //Next instruction
+            //Skip next instruction, execute a NOP
         }
     }
     
