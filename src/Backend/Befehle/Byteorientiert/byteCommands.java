@@ -1,7 +1,6 @@
 package Backend.Befehle.Byteorientiert;
 
 import Backend.Memory.DataMemory.dataMemory;
-import Backend.Registers.ProgramCounter.programCounter;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
 
@@ -124,6 +123,7 @@ public class byteCommands {
     public static void DECFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
         int result = data.readData(f, RP0) - 1;
+        status.setZeroFlag((result & 0xFF) == 0);
         if(d == 0) {
             wReg.write(result);
         } else {
@@ -162,7 +162,17 @@ public class byteCommands {
      * @param data data memory
      */
     public static void INCFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-
+        int RP0 = status.getRP0() ? 1 : 0;
+        int result = data.readData(f, RP0) + 1;
+        status.setZeroFlag((result & 0xFF) == 0);
+        if(d == 0) {
+            wReg.write(result); 
+        } else {
+            data.writeData(f, result, RP0);
+        }
+        if(result == 0) {
+            //Skip next instruction, execute a NOP
+        }
     }
 
     /**
@@ -196,7 +206,12 @@ public class byteCommands {
      */
     public static void MOVF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
-        wReg.write(data.readData(f, RP0));
+        status.setZeroFlag((data.readData(f,RP0) & 0xFF) == 0);
+        if(d == 0) {
+            wReg.write(data.readData(f, RP0));
+        } else {
+            data.writeData(f,data.readData(f, RP0),RP0);
+        }
     }
 
     /**
@@ -316,6 +331,8 @@ public class byteCommands {
     public static void XORWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int RP0 = status.getRP0() ? 1 : 0;
         int result = wReg.read() ^ data.readData(f, RP0);
+
+        status.setZeroFlag(result == 0);
 
         if(d == 0) {
             wReg.write(result);

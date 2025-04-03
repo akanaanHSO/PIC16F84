@@ -1,6 +1,5 @@
 package Backend.Befehle.Bitorientiert;
 
-import Backend.Befehle.Byteorientiert.byteCommands;
 import Backend.Memory.DataMemory.dataMemory;
 import Backend.Registers.StatusRegister.statusRegister;
 
