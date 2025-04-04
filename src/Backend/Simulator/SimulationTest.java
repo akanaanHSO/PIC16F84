@@ -8,6 +8,9 @@ import Backend.Registers.ProgramCounter.programCounter;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
 
+import Backend.Befehle.Byteorientiert.byteCommands;
+import Backend.Befehle.Literal.literalCommands;
+
 public class SimulationTest {
 
     static dataMemory data = new dataMemory();
@@ -36,6 +39,7 @@ public class SimulationTest {
         sReg.setRP0(false);
         System.out.println("Currently in Bank "+whichBank()+".");
 
+        //Writing to Bank0
         data.writeData(0x0C, 0x6F, whichBank());
         data.writeData(0x0F, 0x8F, whichBank());
         data.writeData(0x0B, 0xAF, whichBank());
@@ -47,10 +51,12 @@ public class SimulationTest {
         //Switching Bank
         sReg.setRP0(true);
 
+        //Reading data in Bank1
         System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C, whichBank()));
         System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F, whichBank()));
         System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B, whichBank()));
 
+        //Writing to Bank1
         data.writeData(0x0C, 0xF6, whichBank());
         data.writeData(0x0F, 0xF8, whichBank());
         data.writeData(0x0B, 0xFA, whichBank());
@@ -63,11 +69,11 @@ public class SimulationTest {
         //Literal
         System.out.println("Content of Working Register: "+wReg.read());
 
-        Backend.Befehle.Literal.literalCommands.ADDLW(0x0F, wReg, sReg);
+        literalCommands.ADDLW(0x0F, wReg, sReg); //Adding 15 to wReg
 
         System.out.println("Content of Working Register: "+wReg.read());
 
-        Backend.Befehle.Literal.literalCommands.SUBLW(0x0A, wReg, sReg);
+        literalCommands.SUBLW(0x0A, wReg, sReg); //Subtracting 10
 
         System.out.println("Content of Working Register: "+wReg.read());
 
@@ -75,20 +81,20 @@ public class SimulationTest {
 
         System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10, whichBank()));
 
-        Backend.Befehle.Byteorientiert.byteCommands.MOVWF(0x10, wReg, sReg, data);
+        byteCommands.MOVWF(0x10, wReg, sReg, data); //Writing wReg to adress 0x10 at Bank1
 
         System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10, whichBank()));
 
-        Backend.Befehle.Byteorientiert.byteCommands.CLRW(wReg);
+        byteCommands.CLRW(wReg); //Clearing wReg
 
         System.out.println("Content of Working Register: "+wReg.read());
         
-        Backend.Befehle.Byteorientiert.byteCommands.ADDWF(0x10,0,wReg,sReg,data);
+        byteCommands.ADDWF(0x10,0,wReg,sReg,data); //Adding content of adress 0x10 at Bank1 to wReg
 
         System.out.println("Content of Working Register: "+wReg.read());
         
         sReg.setRP0(false); //Switch to Bank 0
-        Backend.Befehle.Byteorientiert.byteCommands.ADDWF(0x0C,0,wReg,sReg,data);
+        byteCommands.ADDWF(0x0C,0,wReg,sReg,data); //Adding content of adress 0x0C at Bank0 to wReg
 
         System.out.println("Content of Working Register: "+wReg.read());
     }
