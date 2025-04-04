@@ -45,6 +45,10 @@ public class statusRegister {
         flags[4] = flag ? 1 : 0;
     }
 
+    /**
+     * True = Bank1, False = Bank0
+     * @param flag true / false
+     */
     public void setRP0(boolean flag) {
         flags[5] = flag ? 1 : 0;
     }
