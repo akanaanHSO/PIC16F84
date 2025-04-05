@@ -5,19 +5,28 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Backend.Memory.ProgrammMemory.programMemory;
+
 public class readFile {
 
-    public static void main(String[] args) {
-        
+    /**
+     * Reads instructions from File to program Memory
+     * @param pMem program Memory
+     * @param pathString Path to the File (either Relative Path or Full Path)
+     */
+    public void readToProgramMem(programMemory pMem, String pathString) {
         ArrayList<String> instructions = new ArrayList<>();
+        int instructionSet[] = new int[pMem.getSize()];
 
-        try(Scanner s = new Scanner(new File("src\\Backend\\Dekoder\\test.txt"))) {
+        try(Scanner s = new Scanner(new File(pathString))) {
             while(s.hasNextLine()) {
                 instructions.add(s.nextLine());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        System.out.println("File read.");
 
         for(int i = 0; i < instructions.size(); i++) {
             System.out.println(instructions.get(i));
@@ -90,23 +99,26 @@ public class readFile {
                     op = -1;
                     break;
             }
-
+/**
             if(bits.length == 2) {
                 System.out.println("Operand: "+op+", Address: "+address);
             } else if(bits.length == 1) {
                 System.out.println("Operand: "+op);
             } else {
                 System.out.println("Operand: "+op+", Address: "+address+", Destination: "+(destination));
-            }
+            }*/
 
             instruction = op + (address&0x7F) + (destination<<7);
 
-            System.out.println("Instruction: "+instruction);
+            //System.out.println("Instruction: "+instruction);
+
+            instructionSet[i] = instruction;
 
         }
-
-        
-
+        for(int i = 0; i < pMem.getSize(); i++) {
+            pMem.write(i, instructionSet[i]);
+        }
+        System.out.println("Instructions loaded.");
     }
 
 }
