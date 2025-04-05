@@ -7,6 +7,7 @@ import Backend.Registers.InstructionRegister.instructionRegister;
 import Backend.Registers.ProgramCounter.programCounter;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
+import Backend.Dekoder.readFile;
 
 import Backend.Befehle.Byteorientiert.byteCommands;
 import Backend.Befehle.Literal.literalCommands;
@@ -22,6 +23,7 @@ public class SimulationTest {
     static statusRegister sReg = new statusRegister();
 
     static programCounter pc = new programCounter();
+    static readFile file = new readFile();
 
     public static void main(String[] args) {
 
@@ -97,6 +99,17 @@ public class SimulationTest {
         byteCommands.ADDWF(0x0C,0,wReg,sReg,data); //Adding content of adress 0x0C at Bank0 to wReg
 
         System.out.println("Content of Working Register: "+wReg.read());
+
+        //Filereader Test
+
+        file.readToProgramMem(prog,"src\\Backend\\Simulator\\test.txt");
+        
+        for(int i = 0; i < 10; i++) {
+            Integer.toHexString(i);
+            String hexString = String.format("%03x", i);
+            String binaryString = Integer.toBinaryString(prog.read(i));
+            System.out.println("Instruction at Adress 0x"+hexString+": "+binaryString);
+        }
     }
  
     static int whichBank() {
