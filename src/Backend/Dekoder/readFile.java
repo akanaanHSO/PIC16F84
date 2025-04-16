@@ -95,6 +95,57 @@ public class readFile {
                 case "XORWF":
                     op = 0b11<<9;
                     break;
+                case "BCF":
+                    op = 0b1<<12;
+                    break;
+                case "BSF":
+                    op = 0b101<<10;
+                    break;
+                case "BTFSC":
+                    op = 0b11<<11;
+                    break;
+                case "BTFSS":
+                    op = 0b111<<10;
+                    break;
+                case "ADDLW":
+                    op = 0b11111<<9;
+                    break;
+                case "ANDLW":
+                    op = 0b111001<<8;
+                    break;
+                case "CALL":
+                    op = 0b1<<13;
+                    break;
+                case "CLRWDT":
+                    op = 0b11001<<2;
+                    break;
+                case "GOTO":
+                    op = 0b101<<11;
+                    break;
+                case "IORLW":
+                    op = 0b111<<11;
+                    break;
+                case "MOVLW":
+                    op = 0b11<<12;
+                    break;
+                case "RETFIE":
+                    op = 0b1001;
+                    break;
+                case "RETLW":
+                    op = 0b1101<<10;
+                    break;
+                case "RETURN":
+                    op = 0b1<<3;
+                    break;
+                case "SLEEP":
+                    op = 0b1100011;
+                    break;
+                case "SUBLW":
+                    op = 0b1111<<10;
+                    break;
+                case "XORLW":
+                    op = 0b11101<<9;
+                    break;
                 default:
                     op = -1;
                     break;
