@@ -104,7 +104,7 @@ public class SimulationTest {
 
         file.readToProgramMem(prog,"src\\Backend\\Simulator\\Test.LST");
         
-        for(int i = 0; i < 30; i++) {
+        for(int i = 0; i < 17; i++) {
             Integer.toHexString(i);
             String hexString = String.format("%03x", i);
             String binaryString = Integer.toBinaryString(prog.read(i));
