@@ -40,7 +40,7 @@ public class readFile {
             int destination = 0;
             if(bits.length == 3) destination = Integer.decode(bits[2]);
 
-            switch(bits[0]) {
+            switch(bits[0]) { //Byte-Commands
                 case "ADDWF":
                     op = 0b111<<8;
                     break;
@@ -95,7 +95,7 @@ public class readFile {
                 case "XORWF":
                     op = 0b11<<9;
                     break;
-                case "BCF":
+                case "BCF": //Bit-Commands
                     op = 0b1<<12;
                     break;
                 case "BSF":
@@ -107,7 +107,7 @@ public class readFile {
                 case "BTFSS":
                     op = 0b111<<10;
                     break;
-                case "ADDLW":
+                case "ADDLW": //Literal-Commands
                     op = 0b11111<<9;
                     break;
                 case "ANDLW":
@@ -150,18 +150,8 @@ public class readFile {
                     op = -1;
                     break;
             }
-/**
-            if(bits.length == 2) {
-                System.out.println("Operand: "+op+", Address: "+address);
-            } else if(bits.length == 1) {
-                System.out.println("Operand: "+op);
-            } else {
-                System.out.println("Operand: "+op+", Address: "+address+", Destination: "+(destination));
-            }*/
 
             instruction = op + (address&0x7F) + (destination<<7);
-
-            //System.out.println("Instruction: "+instruction);
 
             instructionSet[i] = instruction;
 
