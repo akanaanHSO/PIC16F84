@@ -102,7 +102,7 @@ public class SimulationTest {
 
         //Filereader Test
 
-        file.readToProgramMem(prog,"src\\Backend\\Simulator\\test.txt");
+        file.readToProgramMem(prog,"src\\Backend\\Simulator\\Test.LST");
         
         for(int i = 0; i < 30; i++) {
             Integer.toHexString(i);
