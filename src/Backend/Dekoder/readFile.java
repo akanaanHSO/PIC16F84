@@ -29,7 +29,6 @@ public class readFile {
         System.out.println("File read.");
 
         for(int i = 0; i < instructions.size(); i++) {
-            System.out.println(instructions.get(i));
             String[] bits = instructions.get(i).split(" ");
 
             int instruction = 0;
