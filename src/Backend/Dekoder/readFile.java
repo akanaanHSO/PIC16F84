@@ -166,14 +166,7 @@ public class readFile {
             instructionSet[i] = instruction;
 
         }
-        if(instructionSet.length <= pMem.getSize()) {
-            for(int i = 0; i < instructionSet.length; i++) {
-                pMem.write(i, instructionSet[i]);
-            }
-            System.out.println("Instructions loaded.");
-        } else {
-            System.out.println("Error: InstructionSet too long!");
-        }
+        pMem.loadProgram(instructionSet);
     }
 
 }
