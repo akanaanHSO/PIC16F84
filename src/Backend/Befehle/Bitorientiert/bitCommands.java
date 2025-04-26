@@ -13,9 +13,8 @@ public class bitCommands {
      * @param data data register
      */
     public static void BCF(int f, int b, statusRegister status, dataMemory data) {
-        int RP0 = status.getRP0() ? 1 : 0;
-        int bits = data.readData(f, RP0) & ~(1 << b);
-        data.writeData(f, bits, RP0);
+        int bits = data.readData(f) & ~(1 << b);
+        data.writeData(f, bits);
     }
 
     /**
@@ -26,9 +25,8 @@ public class bitCommands {
      * @param data data register
      */
     public static void BSF (int f, int b, statusRegister status, dataMemory data) {
-        int RP0 = status.getRP0() ? 1 : 0;
-        int bits = data.readData(f, RP0) | (1 << b);
-        data.writeData(f, bits, RP0);
+        int bits = data.readData(f) | (1 << b);
+        data.writeData(f, bits);
     }
 
     /**
@@ -39,8 +37,7 @@ public class bitCommands {
      * @param data data register
      */
     public static void BTFSC (int f, int b, statusRegister status, dataMemory data) {
-        int RP0 = status.getRP0() ? 1 : 0;
-        int dataBit = data.readData(f, RP0) & (1 << b);
+        int dataBit = data.readData(f) & (1 << b);
         
         if(dataBit == 0){
             //Skip next instruction, execute NOP
@@ -55,8 +52,7 @@ public class bitCommands {
      * @param data data register
      */
     public static void BTFSS (int f, int b, statusRegister status, dataMemory data) {
-        int RP0 = status.getRP0() ? 1 : 0;
-        int dataBit = data.readData(f, RP0) & (1 << b);
+        int dataBit = data.readData(f) & (1 << b);
 
         if(dataBit == (1 << b)) {
             //Skip next instruction, execute a NOP

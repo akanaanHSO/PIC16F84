@@ -14,13 +14,14 @@ import Backend.Befehle.Literal.literalCommands;
 
 public class SimulationTest {
 
-    static dataMemory data = new dataMemory();
-    static programMemory prog = new programMemory();
-    static stackMemory stack = new stackMemory();
-
     static workingRegister wReg = new workingRegister();
     static instructionRegister iReg = new instructionRegister();
     static statusRegister sReg = new statusRegister();
+
+    static dataMemory data = new dataMemory(sReg);
+    static programMemory prog = new programMemory();
+    static stackMemory stack = new stackMemory();
+
 
     static programCounter pc = new programCounter();
     static readFile file = new readFile();
@@ -42,30 +43,30 @@ public class SimulationTest {
         System.out.println("Currently in Bank "+whichBank()+".");
 
         //Writing to Bank0
-        data.writeData(0x0C, 0x6F, whichBank());
-        data.writeData(0x0F, 0x8F, whichBank());
-        data.writeData(0x0B, 0xAF, whichBank());
+        data.writeData(0x0C, 0x6F);
+        data.writeData(0x0F, 0x8F);
+        data.writeData(0x0B, 0xAF);
 
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B, whichBank()));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B));
         
         //Switching Bank
         sReg.setRP0(true);
 
         //Reading data in Bank1
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B, whichBank()));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B));
 
         //Writing to Bank1
-        data.writeData(0x0C, 0xF6, whichBank());
-        data.writeData(0x0F, 0xF8, whichBank());
-        data.writeData(0x0B, 0xFA, whichBank());
+        data.writeData(0x0C, 0xF6);
+        data.writeData(0x0F, 0xF8);
+        data.writeData(0x0B, 0xFA);
 
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F, whichBank()));
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B, whichBank()));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0C: "+data.readData(0x0C));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0F: "+data.readData(0x0F));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x0B: "+data.readData(0x0B));
 
         //Testing working Register and commands
         //Literal
@@ -81,11 +82,11 @@ public class SimulationTest {
 
         //Byte
 
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10, whichBank()));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10));
 
         byteCommands.MOVWF(0x10, wReg, sReg, data); //Writing wReg to adress 0x10 at Bank1
 
-        System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10, whichBank()));
+        System.out.println("Data in Bank "+whichBank()+" at adress 0x10: "+data.readData(0x10));
 
         byteCommands.CLRW(wReg); //Clearing wReg
 
