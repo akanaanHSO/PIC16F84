@@ -1,10 +1,40 @@
 package Backend.Befehle.Byteorientiert;
 
+import Backend.Befehle.Instruction;
+import Backend.Interrupt.interruptController;
 import Backend.Memory.DataMemory.dataMemory;
+import Backend.Memory.Stack.stackMemory;
+import Backend.Registers.ProgramCounter.programCounter;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
 
 public class byteCommands {
+    public static void execute(Instruction instruction, workingRegister wReg, statusRegister status, programCounter pc, stackMemory stack, interruptController intCtrl, dataMemory data) {
+        Instruction.OperationCode opcode = instruction.getOpcode();
+        int[] args = instruction.getArguments();
+
+        switch (opcode) {
+            case ADDWF -> ADDWF(args[0], args[1], wReg, status, data);
+            case ANDWF -> ANDWF(args[0], args[1], wReg, status, data);
+            case CLRF -> CLRF(args[0], status, data);
+            case CLRW -> CLRW(wReg, status);
+            case COMF -> COMF(args[0], args[1], wReg, status, data);
+            case DECF -> DECF(args[0], args[1], wReg, status, data);
+            case DECFSZ -> DECFSZ(args[0], args[1], wReg, status, data, pc);
+            case INCF -> INCF(args[0], args[1], wReg, status, data);
+            case INCFSZ -> INCFSZ(args[0], args[1], wReg, status, data, pc);
+            case IORWF -> IORWF(args[0], args[1], wReg, status, data);
+            case MOVF -> MOVF(args[0], args[1], wReg, status, data);
+            case MOVWF -> MOVWF(args[0], wReg, status, data);
+            case NOP -> NOP();
+            case RLF -> RLF(args[0], args[1], wReg, status, data);
+            case RRF -> RRF(args[0], args[1], wReg, status, data);
+            case SUBWF -> SUBWF(args[0], args[1], wReg, status, data);
+            case SWAPF -> SWAPF(args[0], args[1], wReg, status, data);
+            case XORWF -> XORWF(args[0], args[1], wReg, status, data);
+            default -> { throw new IllegalArgumentException("Invalid opcode: " + opcode);}
+        }
+    }
     
     /**
      * Adds working register and content of f
@@ -17,17 +47,11 @@ public class byteCommands {
     public static void ADDWF( int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int w = wReg.read();
         int result = w + data.readData(f);
-
         status.setCarryFlag(result > 0xFF);
         status.setDigitCarryFlag(((w & 0x0F) + (data.readData(f) & 0x0F)) > 0x0F);
         status.setZeroFlag((result & 0xFF) == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f, result);
-        }
-
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -40,32 +64,28 @@ public class byteCommands {
      */
     public static void ANDWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int w = wReg.read();
-
         int result = w & data.readData(f);
-
         status.setZeroFlag((result & 0xFF) == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
      * Clears content of f
      * @param f
      */
-    public static void CLRF(int f, dataMemory data) {
+    public static void CLRF(int f, statusRegister status, dataMemory data) {
         data.writeData(f, 0);
+        status.setZeroFlag(true);
     }
 
     /**
      * Clears working register
      * @param wReg
      */
-    public static void CLRW(workingRegister wReg) {
+    public static void CLRW(workingRegister wReg, statusRegister status) {
         wReg.write(0);
+        status.setZeroFlag(true);
     }
 
     /**
@@ -77,16 +97,10 @@ public class byteCommands {
      * @param data data memory
      */
     public static void COMF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = (~data.readData(f))+1;
-
-        status.setZeroFlag((result & 0xFF) == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f, result);
-        }
-
+        int result = ~data.readData(f) & 0xFF;
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -98,13 +112,10 @@ public class byteCommands {
      * @param data data memory
      */
     public static void DECF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = data.readData(f) - 1;
-        status.setZeroFlag((result & 0xFF) == 0);
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+        int result = (data.readData(f) - 1) & 0xFF;
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -115,16 +126,14 @@ public class byteCommands {
      * @param status status register
      * @param data data memory
      */
-    public static void DECFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = data.readData(f) - 1;
-        status.setZeroFlag((result & 0xFF) == 0);
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+    public static void DECFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data, programCounter pc) {
+        int result = (data.readData(f) - 1) & 0xFF;
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
         if(result == 0) {
             //Skip next instruction, execute a NOP
+            pc.increment();
         }
     }
 
@@ -137,13 +146,10 @@ public class byteCommands {
      * @param data data memory
      */
     public static void INCF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = data.readData(f) + 1;
-        status.setZeroFlag((result & 0xFF) == 0);
-        if(d == 0) {
-            wReg.write(result); 
-        } else {
-            data.writeData(f, result);
-        }
+        int result = (data.readData(f) + 1) & 0xFF;
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -154,16 +160,14 @@ public class byteCommands {
      * @param status status register
      * @param data data memory
      */
-    public static void INCFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = data.readData(f) + 1;
-        status.setZeroFlag((result & 0xFF) == 0);
-        if(d == 0) {
-            wReg.write(result); 
-        } else {
-            data.writeData(f, result);
-        }
+    public static void INCFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data, programCounter pc) {
+        int result = (data.readData(f) + 1) & 0xFF;
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
         if(result == 0) {
             //Skip next instruction, execute a NOP
+            pc.increment();
         }
     }
 
@@ -177,14 +181,9 @@ public class byteCommands {
      */
     public static void IORWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = wReg.read() | data.readData(f);
-
         status.setZeroFlag((result & 0xFF) == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -196,12 +195,10 @@ public class byteCommands {
      * @param data data memory
      */
     public static void MOVF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        status.setZeroFlag((data.readData(f) & 0xFF) == 0);
-        if(d == 0) {
-            wReg.write(data.readData(f));
-        } else {
-            data.writeData(f,data.readData(f));
-        }
+        int value = data.readData(f) & 0xFF;
+        status.setZeroFlag(value == 0);
+        if(d == 0) wReg.write(value);
+        else data.writeData(f,value);
     }
 
     /**
@@ -212,7 +209,8 @@ public class byteCommands {
      * @param data data memory
      */
     public static void MOVWF(int f, workingRegister wReg, statusRegister status, dataMemory data) {
-        data.writeData(f, wReg.read());
+        int value = wReg.read() & 0xFF;
+        data.writeData(f, value);
     }
 
     /**
@@ -229,16 +227,12 @@ public class byteCommands {
      * @param data data memory
      */
     public static void RLF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int num = data.readData(f);
+        int value = data.readData(f);
         int carry = status.getCarryFlag() ? 1 : 0;
-        status.setCarryFlag((num & 0x80) == 0x80);
-        num = num << 1;
-        num += carry;
-        if(d == 0) {
-            wReg.write(num);
-        } else {
-            data.writeData(f,num);
-        }
+        int result = ((value << 1) | carry) & 0xFF;
+        status.setCarryFlag((value & 0x80) != 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -249,16 +243,12 @@ public class byteCommands {
      * @param data data memory
      */
     public static void RRF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int num = data.readData(f);
+        int value = data.readData(f);
         int carry = status.getCarryFlag() ? 1 : 0;
-        status.setCarryFlag((num & 1) == 1);
-        num = num >> 1;
-        num += carry << 0xFF;
-        if(d == 0) {
-            wReg.write(num);
-        } else {
-            data.writeData(f,num);
-        }
+        status.setCarryFlag((value & 0x01) != 0);
+        int result = ((value >> 1) | (carry << 7)) & 0xFF;
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -270,19 +260,14 @@ public class byteCommands {
      * @param data data memory
      */
     public static void SUBWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-
-        int w = wReg.read();
-        int result = data.readData(f) - w;
-
-        status.setCarryFlag(result < 0);
-        status.setDigitCarryFlag(((w & 0x0F) - (data.readData(f) & 0x0F)) < 0);
-        status.setZeroFlag((result & 0xFF) == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+        int wValue = wReg.read();
+        int fValue = data.readData(f);
+        int result = (fValue - wValue) & 0xFF;
+        status.setCarryFlag(fValue >= wValue);
+        status.setDigitCarryFlag((fValue & 0x0F) >= (wValue & 0x0F));
+        status.setZeroFlag(result == 0);
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -294,15 +279,11 @@ public class byteCommands {
      * @param data data memory
      */
     public static void SWAPF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int leftWord = data.readData(f) & 0b1111<<4;
-        int rightWord = data.readData(f) & 0b00001111;
-        int result = leftWord >> 4 + rightWord << 4;
+        int value = data.readData(f);
+        int result = ((value & 0x0F) << 4) | ((value & 0xF0) >> 4);
         status.setZeroFlag((result & 0xFF) == 0);
-        if (d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f, result);
-        }
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
 
     /**
@@ -314,15 +295,9 @@ public class byteCommands {
      * @param data data memory
      */
     public static void XORWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
-        int result = wReg.read() ^ data.readData(f);
-
+        int result = (wReg.read() ^ data.readData(f)) & 0xFF;
         status.setZeroFlag(result == 0);
-
-        if(d == 0) {
-            wReg.write(result);
-        } else {
-            data.writeData(f,result);
-        }
+        if(d == 0) wReg.write(result);
+        else data.writeData(f,result);
     }
-
 }

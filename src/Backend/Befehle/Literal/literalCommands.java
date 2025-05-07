@@ -1,5 +1,6 @@
 package Backend.Befehle.Literal;
 
+import Backend.Befehle.Instruction;
 import Backend.Registers.StatusRegister.statusRegister;
 import Backend.Registers.WorkingRegister.workingRegister;
 import Backend.Memory.Stack.stackMemory;
@@ -11,6 +12,27 @@ import Backend.Interrupt.interruptController;
  */
 
 public class literalCommands {
+    public static void execute(Instruction instruction, workingRegister wReg, statusRegister status, programCounter pc, stackMemory stack, interruptController intCtrl) {
+        Instruction.OperationCode opcode = instruction.getOpcode();
+        int[] args = instruction.getArguments();
+
+        switch (opcode) {
+            case ADDLW -> ADDLW(args[0], wReg, status);
+            case ANDLW -> ANDLW(args[0], wReg, status);
+            case SUBLW -> SUBLW(args[0], wReg, status);
+            case IORLW -> IORLW(args[0], wReg, status);
+            case XORLW -> XORLW(args[0], wReg, status);
+            case GOTO -> GOTO(args[0], pc);
+            case CALL -> CALL(args[0], pc, stack);
+            case MOVLW -> MOVLW(args[0], wReg);
+            case RETLW -> RETLW(args[0], wReg, pc, stack);
+            case RETURN -> RETURN(pc, stack);
+            case RETFIE -> RETFIE(pc, stack, intCtrl);
+            case SLEEP -> SLEEP(status);
+            case CLRWDT -> CLRWDT(status);
+            default -> throw new IllegalArgumentException("Invalid opcode: " + opcode);
+        }
+    }
 
     /**
      * ADDLW adds the literal k to the working register.
@@ -18,7 +40,6 @@ public class literalCommands {
     public static void ADDLW (int k, workingRegister wReg, statusRegister status) {
         int w = wReg.read();
         int result = w + k;
-
         status.setCarryFlag(result > 0xFF);
         status.setDigitCarryFlag(((w & 0x0F) + (k & 0x0F)) > 0x0F);
         status.setZeroFlag((result & 0xFF) == 0);
@@ -31,7 +52,6 @@ public class literalCommands {
     public static void ANDLW (int k, workingRegister wReg, statusRegister status) {
         int w = wReg.read();
         int result = w & k;
-
         status.setZeroFlag(result == 0);
         wReg.write(result & 0xFF);
     }
@@ -41,10 +61,9 @@ public class literalCommands {
      */
     public static void SUBLW (int k, workingRegister wReg, statusRegister status) {
         int w = wReg.read();
-        int result = w - k;
-
-        status.setCarryFlag(result < 0);
-        status.setDigitCarryFlag(((w & 0x0F) - (k & 0x0F)) < 0);
+        int result = (k - w) & 0xFF;
+        status.setCarryFlag(k >= w);
+        status.setDigitCarryFlag((k & 0x0F) >= (w & 0x0F));
         status.setZeroFlag((result & 0xFF) == 0);
         wReg.write(result & 0xFF);
     }
@@ -65,7 +84,6 @@ public class literalCommands {
     public static void XORLW (int k, workingRegister wReg, statusRegister status) {
         int w = wReg.read();
         int result = w ^ k;
-
         status.setZeroFlag(result == 0);
         wReg.write(result & 0xFF);
     }
@@ -81,7 +99,7 @@ public class literalCommands {
      * CALL calls the subroutine at the address.
      */
     public static void CALL (int address, programCounter pc, stackMemory stack) {
-        int returnAddress = pc.getPC() + 1; // store the return address
+        int returnAddress = pc.getPC();
         stack.push(returnAddress);
         pc.jumpTo(address);
     }
@@ -117,7 +135,7 @@ public class literalCommands {
         int returnAddress = stack.pop();
         pc.setPC(returnAddress);
         if (intCtrl != null) {
-            intCtrl.enableGlobalInterrupt(); // set GIE-Bit to 1 (activate global interrupt)
+            //intCtrl.enableGlobalInterrupt(); // set GIE-Bit to 1 (activate global interrupt)
         }
     }
 
