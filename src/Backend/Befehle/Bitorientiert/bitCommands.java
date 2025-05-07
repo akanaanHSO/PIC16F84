@@ -15,9 +15,10 @@ public class bitCommands {
             case BSF -> BSF(args[0], args[1], data);
             case BTFSC -> BTFSC(args[0], args[1], data, pc);
             case BTFSS -> BTFSS(args[0], args[1], data, pc);
-            default -> { throw new IllegalArgumentException("Invalid opcode: " + opcode);}
+            default -> throw new IllegalArgumentException("Invalid opcode: " + opcode);
         }
     }
+
     /**
      * Bit-Clear at Address f
      */

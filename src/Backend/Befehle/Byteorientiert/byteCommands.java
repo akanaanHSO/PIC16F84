@@ -32,17 +32,12 @@ public class byteCommands {
             case SUBWF -> SUBWF(args[0], args[1], wReg, status, data);
             case SWAPF -> SWAPF(args[0], args[1], wReg, status, data);
             case XORWF -> XORWF(args[0], args[1], wReg, status, data);
-            default -> { throw new IllegalArgumentException("Invalid opcode: " + opcode);}
+            default -> throw new IllegalArgumentException("Invalid opcode: " + opcode);
         }
     }
     
     /**
      * Adds working register and content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void ADDWF( int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int w = wReg.read();
@@ -56,11 +51,6 @@ public class byteCommands {
 
     /**
      * AND-Connection between Working register and content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void ANDWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int w = wReg.read();
@@ -72,7 +62,6 @@ public class byteCommands {
 
     /**
      * Clears content of f
-     * @param f
      */
     public static void CLRF(int f, statusRegister status, dataMemory data) {
         data.writeData(f, 0);
@@ -81,7 +70,6 @@ public class byteCommands {
 
     /**
      * Clears working register
-     * @param wReg
      */
     public static void CLRW(workingRegister wReg, statusRegister status) {
         wReg.write(0);
@@ -90,11 +78,6 @@ public class byteCommands {
 
     /**
      * Forms complement of content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void COMF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = ~data.readData(f) & 0xFF;
@@ -105,11 +88,6 @@ public class byteCommands {
 
     /**
      * Decrements content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void DECF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = (data.readData(f) - 1) & 0xFF;
@@ -120,11 +98,6 @@ public class byteCommands {
 
     /**
      * Decrements content of f, skips next instruction if result is zero
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void DECFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data, programCounter pc) {
         int result = (data.readData(f) - 1) & 0xFF;
@@ -139,11 +112,6 @@ public class byteCommands {
 
     /**
      * Increments content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void INCF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = (data.readData(f) + 1) & 0xFF;
@@ -154,11 +122,6 @@ public class byteCommands {
 
     /**
      * Increments content of f, skips next instruction if result is zero
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void INCFSZ(int f, int d, workingRegister wReg, statusRegister status, dataMemory data, programCounter pc) {
         int result = (data.readData(f) + 1) & 0xFF;
@@ -173,11 +136,6 @@ public class byteCommands {
 
     /**
      * OR-connection between working register and content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void IORWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = wReg.read() | data.readData(f);
@@ -188,11 +146,6 @@ public class byteCommands {
 
     /**
      * Gets value from f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void MOVF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int value = data.readData(f) & 0xFF;
@@ -203,10 +156,6 @@ public class byteCommands {
 
     /**
      * Writes content of working register to f
-     * @param f
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void MOVWF(int f, workingRegister wReg, statusRegister status, dataMemory data) {
         int value = wReg.read() & 0xFF;
@@ -221,10 +170,6 @@ public class byteCommands {
 
     /**
      * Rotates content of f to the left through carry
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param status status register
-     * @param data data memory
      */
     public static void RLF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int value = data.readData(f);
@@ -237,10 +182,6 @@ public class byteCommands {
 
     /**
      * Rotates content of f to the right through carry
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param status status register
-     * @param data data memory
      */
     public static void RRF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int value = data.readData(f);
@@ -253,11 +194,6 @@ public class byteCommands {
 
     /**
      * Subtracts working register from content of f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void SUBWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int wValue = wReg.read();
@@ -272,11 +208,6 @@ public class byteCommands {
 
     /**
      * Swaps both halfbytes at f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void SWAPF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int value = data.readData(f);
@@ -288,11 +219,6 @@ public class byteCommands {
 
     /**
      * EXCLUSIVE-OR of working register and f
-     * @param f
-     * @param d destination-bit (0 = wReg, 1 = f)
-     * @param wReg working register
-     * @param status status register
-     * @param data data memory
      */
     public static void XORWF(int f, int d, workingRegister wReg, statusRegister status, dataMemory data) {
         int result = (wReg.read() ^ data.readData(f)) & 0xFF;
