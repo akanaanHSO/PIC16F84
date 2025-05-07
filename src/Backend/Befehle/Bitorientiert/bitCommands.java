@@ -51,7 +51,7 @@ public class bitCommands {
      */
     public static void BTFSS (int f, int b, dataMemory data, programCounter pc) {
         int dataBit = (data.readData(f) >> b) & 1;
-        if (dataBit == (1 << b)) {
+        if (dataBit == 1) {
             //Skip next instruction, execute a NOP
             pc.increment();
         }
